@@ -22,10 +22,10 @@ Clone this repository:
 git clone https://github.com/mongodb/docs-get-started
 ```
 
-Navigate into the `node` project directory and install dependencies:
+Navigate into the `js/node-driver` project directory and install dependencies:
 
 ```bash
-cd docs-get-started/node
+cd docs-get-started/js/node-driver
 npm install
 ```
 
