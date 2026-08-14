@@ -6,7 +6,10 @@ includes its own setup instructions.
 
 ## Available Client Libraries
 
-- [Node.js](node/README.md)
+- [.NET/C#](dotnet/hello-world/README.md)
+- [Go](go/hello-world/README.md)
+- [Node.js](node/hello-world/README.md)
+- [Python](python/hello-world/README.md)
 
 ## Prerequisites
 
