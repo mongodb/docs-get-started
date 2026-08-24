@@ -12,8 +12,11 @@ credentials.
 
 You also need the following components installed in your development environment:
 
-- A C++17-compatible compiler
 - CMake 3.15 or later
+- A C++17-compatible compiler
+- [vcpkg](https://github.com/microsoft/vcpkg) (Windows and Linux)
+
+The commands in this guide assume a Bash compatible shell.
 
 ## Installation
 
@@ -28,16 +31,13 @@ git clone https://github.com/mongodb/docs-get-started
 This project requires MongoDB C++ driver (mongocxx) 4.0 or later. Install
 it with your platform's package manager.
 
-On macOS, use [Homebrew](https://brew.sh/):
+<details open>
+<summary><strong>macOS / Linux </strong></summary>
+
+On macOS, install the MongoDB C++ driver with [Homebrew](https://brew.sh/):
 
 ```bash
 brew install mongo-cxx-driver
-```
-
-On Windows, use [vcpkg](https://vcpkg.io/):
-
-```powershell
-vcpkg install mongo-cxx-driver
 ```
 
 On Linux, most distribution packages are too old to satisfy this
@@ -47,25 +47,12 @@ requirement. Use vcpkg instead:
 vcpkg install mongo-cxx-driver
 ```
 
-For other installation methods, see the
-[C++ driver installation guide](https://www.mongodb.com/docs/languages/cpp/cpp-driver/current/installation/).
-
-### Build the Application
-
 Navigate into the project directory, then configure and build:
 
 ```bash
 cd docs-get-started/cpp/hello-world
 cmake -S . -B build
 cmake --build build
-```
-
-On Windows, use the following commands instead:
-
-```powershell
-cd docs-get-started\cpp\hello-world
-cmake -S . -B build
-cmake --build build --config Release
 ```
 
 If you installed the driver with vcpkg, add the vcpkg toolchain file to
@@ -75,6 +62,30 @@ your vcpkg installation path:
 ```bash
 cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=<vcpkg root>/scripts/buildsystems/vcpkg.cmake
 ```
+</details>
+
+<details open>
+<summary><strong>Windows </strong></summary>
+
+On Windows, use vcpkg to install the MongoDB C++ driver:
+
+```bash
+vcpkg install mongo-cxx-driver
+```
+
+Navigate into the project directory, then configure and build:
+
+```bash
+cd docs-get-started/cpp/hello-world
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=<vcpkg root>/scripts/buildsystems/vcpkg.cmake
+cmake --build build --config Release
+```
+
+Replace `<vcpkg root>` with your vcpkg installation path.
+</details>
+
+For other installation methods, see the
+[C++ driver installation guide](https://www.mongodb.com/docs/languages/cpp/cpp-driver/current/installation/).
 
 ## Connect to MongoDB
 
@@ -85,13 +96,9 @@ Set your connection string as an environment variable, replacing
 export MONGODB_URI="<connection string uri>"
 ```
 
-On Windows, use the following command instead:
-
-```powershell
-$Env:MONGODB_URI = "<connection string uri>"
-```
-
 ## Run the Application
+
+On macOS and Linux, run the following command:
 
 ```bash
 ./build/hello-world
@@ -99,8 +106,8 @@ $Env:MONGODB_URI = "<connection string uri>"
 
 On Windows, use the following command instead:
 
-```powershell
-.\build\Release\hello-world.exe
+```bash
+./build/Release/hello-world.exe
 ```
 
 When you run the app, it inserts a few product documents into the

@@ -17,7 +17,6 @@ includes its own setup instructions.
 - [Node.js](node/hello-world/README.md)
 - [PHP](php/hello-world/README.md)
 - [Python](python/hello-world/README.md)
-- [Ruby](ruby/hello-world/README.md)
 
 ## Prerequisites
 

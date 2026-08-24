@@ -15,6 +15,8 @@ You also need the following components installed in your development environment
 - JDK version 21 or later
 - Maven
 
+The commands in this guide assume a Bash compatible shell.
+
 ## Installation
 
 Clone this repository:
@@ -32,13 +34,6 @@ cd docs-get-started/kotlin-coroutine/hello-world
 mvn compile
 ```
 
-On Windows, use the following commands instead:
-
-```powershell
-cd docs-get-started\kotlin-coroutine\hello-world
-mvn compile
-```
-
 ## Connect to MongoDB
 
 Set your connection string as an environment variable, replacing
@@ -46,12 +41,6 @@ Set your connection string as an environment variable, replacing
 
 ```bash
 export MONGODB_URI="<connection string uri>"
-```
-
-On Windows, use the following command instead:
-
-```powershell
-$Env:MONGODB_URI = "<connection string uri>"
 ```
 
 ## Run the Application
