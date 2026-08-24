@@ -43,7 +43,9 @@ begin
   query = { name: 'Wireless Mouse' }
   product = products.find(query).first
 
-  puts product.to_json
+  # Serialize as relaxed Extended JSON so the ObjectId keeps its "$oid"
+  # wrapper while price stays a plain JSON number.
+  puts product.to_extended_json(mode: :relaxed)
 ensure
   client.close
 end
