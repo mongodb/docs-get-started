@@ -1,5 +1,7 @@
 import static com.mongodb.client.model.Filters.eq;
 
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.InsertManyResult;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoCollection;
@@ -29,6 +31,10 @@ public class HelloWorld {
 
     public static void main(String[] args) {
         String uri = System.getenv("MONGODB_URI");
+        if (uri == null || uri.isEmpty()) {
+            System.err.println("Set the MONGODB_URI environment variable to your connection string.");
+            System.exit(1);
+        }
 
         try (MongoClient client = MongoClients.create(uri)) {
             MongoDatabase database = client.getDatabase("get_started");
@@ -40,10 +46,23 @@ public class HelloWorld {
 
             // Seed the collection so the app has data to query. Clearing the
             // collection first keeps results consistent across repeated runs.
-            Mono.from(products.deleteMany(new Document())).block();
-            Mono.from(products.insertMany(SAMPLE_PRODUCTS)).block();
+            DeleteResult deleteResult = Mono.from(products.deleteMany(new Document())).block();
+            if (deleteResult == null || !deleteResult.wasAcknowledged()) {
+                System.err.println("Failed to clear the products collection.");
+                System.exit(1);
+            }
+
+            InsertManyResult insertResult = Mono.from(products.insertMany(SAMPLE_PRODUCTS)).block();
+            if (insertResult == null || !insertResult.wasAcknowledged()) {
+                System.err.println("Failed to insert the sample products.");
+                System.exit(1);
+            }
 
             Document product = Mono.from(products.find(eq("name", "Wireless Mouse")).first()).block();
+            if (product == null) {
+                System.err.println("No product found matching the query.");
+                System.exit(1);
+            }
             System.out.println(product.toJson());
         }
     }

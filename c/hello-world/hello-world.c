@@ -105,7 +105,7 @@ main (void)
    int exit_code = EXIT_SUCCESS;
 
    uri_string = getenv ("MONGODB_URI");
-   if (!uri_string) {
+   if (!uri_string || !*uri_string) {
       fprintf (stderr, "Set the MONGODB_URI environment variable before running this app.\n");
       return EXIT_FAILURE;
    }

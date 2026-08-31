@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <bsoncxx/builder/basic/array.hpp>
 #include <bsoncxx/builder/basic/document.hpp>
@@ -42,47 +43,66 @@ std::vector<bsoncxx::document::value> sample_products() {
 
 int main() {
     const char* uri_env = std::getenv("MONGODB_URI");
-    if (uri_env == nullptr) {
+    if (uri_env == nullptr || *uri_env == '\0') {
         std::cerr << "Set the MONGODB_URI environment variable to your "
                      "connection string.\n";
         return EXIT_FAILURE;
     }
 
     mongocxx::instance instance{};
-    mongocxx::client client{mongocxx::uri{uri_env}};
+
+    mongocxx::client client;
+    try {
+        client = mongocxx::client{mongocxx::uri{uri_env}};
+    } catch (const std::exception& e) {
+        std::cerr << "Failed to connect using MONGODB_URI: " << e.what() << "\n";
+        return EXIT_FAILURE;
+    }
 
     auto database = client["get_started"];
     auto products = database["products"];
 
     // Seed the collection so the app has data to query. Clearing the
     // collection first keeps results consistent across repeated runs.
-    products.delete_many({});
-    products.insert_many(sample_products());
+    auto delete_result = products.delete_many({});
+    if (!delete_result) {
+        std::cerr << "Failed to clear the products collection.\n";
+        return EXIT_FAILURE;
+    }
+
+    auto insert_result = products.insert_many(sample_products());
+    if (!insert_result) {
+        std::cerr << "Failed to insert the sample products.\n";
+        return EXIT_FAILURE;
+    }
 
     auto filter = make_document(kvp("name", "Wireless Mouse"));
     auto product = products.find_one(filter.view());
-    if (product) {
-        auto view = product->view();
-
-        std::array<char, 32> buf;
-        auto [ptr, ec] = std::to_chars(
-            buf.data(), buf.data() + buf.size(), view["price"].get_double().value);
-        std::string price(buf.data(), ptr);
-
-        std::cout << "{ \"_id\" : { \"$oid\" : \""
-                  << view["_id"].get_oid().value.to_string() << "\" }"
-                  << ", \"name\" : \"" << view["name"].get_string().value << "\""
-                  << ", \"category\" : \"" << view["category"].get_string().value
-                  << "\""
-                  << ", \"price\" : " << price << ", \"tags\" : [";
-        bool first = true;
-        for (auto tag : view["tags"].get_array().value) {
-            std::cout << (first ? " " : ", ") << "\"" << tag.get_string().value
-                      << "\"";
-            first = false;
-        }
-        std::cout << " ] }\n";
+    if (!product) {
+        std::cerr << "No product found matching the query.\n";
+        return EXIT_FAILURE;
     }
+
+    auto view = product->view();
+
+    std::array<char, 32> buf;
+    auto [ptr, ec] = std::to_chars(
+        buf.data(), buf.data() + buf.size(), view["price"].get_double().value);
+    std::string price(buf.data(), ptr);
+
+    std::cout << "{ \"_id\" : { \"$oid\" : \""
+              << view["_id"].get_oid().value.to_string() << "\" }"
+              << ", \"name\" : \"" << view["name"].get_string().value << "\""
+              << ", \"category\" : \"" << view["category"].get_string().value
+              << "\""
+              << ", \"price\" : " << price << ", \"tags\" : [";
+    bool first = true;
+    for (auto tag : view["tags"].get_array().value) {
+        std::cout << (first ? " " : ", ") << "\"" << tag.get_string().value
+                  << "\"";
+        first = false;
+    }
+    std::cout << " ] }\n";
 
     return EXIT_SUCCESS;
 }

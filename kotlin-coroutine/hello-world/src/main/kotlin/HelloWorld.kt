@@ -1,5 +1,6 @@
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.coroutine.MongoClient
+import kotlin.system.exitProcess
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import org.bson.Document
@@ -23,6 +24,10 @@ private val SAMPLE_PRODUCTS = listOf(
 
 fun main() = runBlocking {
     val uri = System.getenv("MONGODB_URI")
+    if (uri.isNullOrEmpty()) {
+        System.err.println("Set the MONGODB_URI environment variable to your connection string.")
+        exitProcess(1)
+    }
 
     MongoClient.create(uri).use { client ->
         val database = client.getDatabase("get_started")
@@ -34,10 +39,23 @@ fun main() = runBlocking {
         // Seed the collection so the app has data to query. Clearing
         // the collection first keeps results consistent across
         // repeated runs.
-        products.deleteMany(Document())
-        products.insertMany(SAMPLE_PRODUCTS)
+        val deleteResult = products.deleteMany(Document())
+        if (!deleteResult.wasAcknowledged()) {
+            System.err.println("Failed to clear the products collection.")
+            exitProcess(1)
+        }
+
+        val insertResult = products.insertMany(SAMPLE_PRODUCTS)
+        if (!insertResult.wasAcknowledged()) {
+            System.err.println("Failed to insert the sample products.")
+            exitProcess(1)
+        }
 
         val product = products.find(eq("name", "Wireless Mouse")).firstOrNull()
-        println(product?.toJson())
+        if (product == null) {
+            System.err.println("No product found matching the query.")
+            exitProcess(1)
+        }
+        println(product.toJson())
     }
 }

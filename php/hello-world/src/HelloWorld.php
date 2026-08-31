@@ -38,9 +38,22 @@ $products = $client->get_started->products;
 
 // Seed the collection so the app has data to query. Clearing the
 // collection first keeps results consistent across repeated runs.
-$products->deleteMany([]);
-$products->insertMany($sampleProducts);
+$deleteResult = $products->deleteMany([]);
+if (!$deleteResult->isAcknowledged()) {
+    fwrite(STDERR, "Failed to clear the products collection\n");
+    exit(1);
+}
+
+$insertResult = $products->insertMany($sampleProducts);
+if (!$insertResult->isAcknowledged()) {
+    fwrite(STDERR, "Failed to insert the sample products\n");
+    exit(1);
+}
 
 $product = $products->findOne(['name' => 'Wireless Mouse']);
+if ($product === null) {
+    fwrite(STDERR, "No product found matching the query\n");
+    exit(1);
+}
 
 echo json_encode($product), "\n";
