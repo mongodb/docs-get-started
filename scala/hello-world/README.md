@@ -12,7 +12,7 @@ credentials.
 
 You also need the following components installed in your development environment:
 
-- JDK version 8 or later
+- JDK version 17 or later
 - sbt
 
 ## Installation
