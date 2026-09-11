@@ -29,33 +29,41 @@ fun main() = runBlocking {
         exitProcess(1)
     }
 
-    MongoClient.create(uri).use { client ->
-        val database = client.getDatabase("get_started")
-        val products = database.getCollection<Document>("products")
-
-        // The coroutine driver exposes suspending functions, so these
-        // calls run inside the runBlocking coroutine.
-
-        // Seed the collection so the app has data to query. Clearing
-        // the collection first keeps results consistent across
-        // repeated runs.
-        val deleteResult = products.deleteMany(Document())
-        if (!deleteResult.wasAcknowledged()) {
-            System.err.println("Failed to clear the products collection.")
-            exitProcess(1)
+    try {
+        MongoClient.create(uri).use { client ->
+            run(client)
         }
-
-        val insertResult = products.insertMany(SAMPLE_PRODUCTS)
-        if (!insertResult.wasAcknowledged()) {
-            System.err.println("Failed to insert the sample products.")
-            exitProcess(1)
-        }
-
-        val product = products.find(eq("name", "Wireless Mouse")).firstOrNull()
-        if (product == null) {
-            System.err.println("No product found matching the query.")
-            exitProcess(1)
-        }
-        println(product.toJson())
+    } catch (e: RuntimeException) {
+        // The use() scope closes the client before the process exits,
+        // so the client is shut down cleanly on error paths.
+        System.err.println(e.message)
+        exitProcess(1)
     }
+}
+
+private suspend fun run(client: MongoClient) {
+    val database = client.getDatabase("get_started")
+    val products = database.getCollection<Document>("products")
+
+    // The coroutine driver exposes suspending functions, so these
+    // calls run inside the runBlocking coroutine.
+
+    // Seed the collection so the app has data to query. Clearing
+    // the collection first keeps results consistent across
+    // repeated runs.
+    val deleteResult = products.deleteMany(Document())
+    if (!deleteResult.wasAcknowledged()) {
+        throw IllegalStateException("Failed to clear the products collection.")
+    }
+
+    val insertResult = products.insertMany(SAMPLE_PRODUCTS)
+    if (!insertResult.wasAcknowledged()) {
+        throw IllegalStateException("Failed to insert the sample products.")
+    }
+
+    val product = products.find(eq("name", "Wireless Mouse")).firstOrNull()
+    if (product == null) {
+        throw IllegalStateException("No product found matching the query.")
+    }
+    println(product.toJson())
 }

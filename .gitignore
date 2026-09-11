@@ -1,0 +1,13 @@
+# Node.js / npm dependencies and build output
+node_modules/
+dist/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor cruft
+.DS_Store
+.idea/
+.vscode/

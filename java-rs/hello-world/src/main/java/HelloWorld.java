@@ -37,33 +37,39 @@ public class HelloWorld {
         }
 
         try (MongoClient client = MongoClients.create(uri)) {
-            MongoDatabase database = client.getDatabase("get_started");
-            MongoCollection<Document> products = database.getCollection("products");
-
-            // Each reactive driver call returns a Publisher. Wrapping it in a
-            // Reactor Mono and calling block() runs the operation and waits for
-            // it to complete before moving on.
-
-            // Seed the collection so the app has data to query. Clearing the
-            // collection first keeps results consistent across repeated runs.
-            DeleteResult deleteResult = Mono.from(products.deleteMany(new Document())).block();
-            if (deleteResult == null || !deleteResult.wasAcknowledged()) {
-                System.err.println("Failed to clear the products collection.");
-                System.exit(1);
-            }
-
-            InsertManyResult insertResult = Mono.from(products.insertMany(SAMPLE_PRODUCTS)).block();
-            if (insertResult == null || !insertResult.wasAcknowledged()) {
-                System.err.println("Failed to insert the sample products.");
-                System.exit(1);
-            }
-
-            Document product = Mono.from(products.find(eq("name", "Wireless Mouse")).first()).block();
-            if (product == null) {
-                System.err.println("No product found matching the query.");
-                System.exit(1);
-            }
-            System.out.println(product.toJson());
+            run(client);
+        } catch (RuntimeException e) {
+            // The try-with-resources closes the client before the process
+            // exits, so the client is shut down cleanly on error paths.
+            System.err.println(e.getMessage());
+            System.exit(1);
         }
+    }
+
+    private static void run(MongoClient client) {
+        MongoDatabase database = client.getDatabase("get_started");
+        MongoCollection<Document> products = database.getCollection("products");
+
+        // Each reactive driver call returns a Publisher. Wrapping it in a
+        // Reactor Mono and calling block() runs the operation and waits for
+        // it to complete before moving on.
+
+        // Seed the collection so the app has data to query. Clearing the
+        // collection first keeps results consistent across repeated runs.
+        DeleteResult deleteResult = Mono.from(products.deleteMany(new Document())).block();
+        if (deleteResult == null || !deleteResult.wasAcknowledged()) {
+            throw new IllegalStateException("Failed to clear the products collection.");
+        }
+
+        InsertManyResult insertResult = Mono.from(products.insertMany(SAMPLE_PRODUCTS)).block();
+        if (insertResult == null || !insertResult.wasAcknowledged()) {
+            throw new IllegalStateException("Failed to insert the sample products.");
+        }
+
+        Document product = Mono.from(products.find(eq("name", "Wireless Mouse")).first()).block();
+        if (product == null) {
+            throw new IllegalStateException("No product found matching the query.");
+        }
+        System.out.println(product.toJson());
     }
 }
