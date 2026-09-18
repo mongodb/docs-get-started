@@ -17,7 +17,7 @@ fn sample_products() -> Vec<Document> {
 async fn main() -> mongodb::error::Result<()> {
     let uri = std::env::var("MONGODB_URI")
         .ok()
-        .filter(|uri| !uri.is_empty())
+        .filter(|uri| !uri.trim().is_empty())
         .expect("Set the MONGODB_URI environment variable before running this app.");
 
     let client = Client::with_uri_str(&uri).await?;

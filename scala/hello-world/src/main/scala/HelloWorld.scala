@@ -30,7 +30,7 @@ object HelloWorld {
 
   def main(args: Array[String]): Unit = {
     val uri = sys.env.get("MONGODB_URI")
-      .filter(_.nonEmpty)
+      .filter(_.trim.nonEmpty)
       .getOrElse {
         System.err.println("Set the MONGODB_URI environment variable before running this app.")
         sys.exit(1)
