@@ -1,5 +1,8 @@
+use std::str::FromStr;
+
 use mongodb::Client;
 use mongodb::bson::Bson;
+use mongodb::bson::Decimal128;
 use mongodb::bson::Document;
 use mongodb::bson::doc;
 
@@ -7,9 +10,9 @@ use mongodb::bson::doc;
 // without loading an external dataset.
 fn sample_products() -> Vec<Document> {
     vec![
-        doc! { "name": "Wireless Mouse", "category": "Electronics", "price": 24.99, "tags": ["wireless", "usb", "ergonomic"] },
-        doc! { "name": "Standing Desk", "category": "Furniture", "price": 349.99, "tags": ["adjustable", "office"] },
-        doc! { "name": "Noise-Cancelling Headphones", "category": "Electronics", "price": 199.99, "tags": ["bluetooth", "wireless", "over-ear"] },
+        doc! { "name": "Wireless Mouse", "category": "Electronics", "price": Decimal128::from_str("24.99").unwrap(), "tags": ["wireless", "usb", "ergonomic"] },
+        doc! { "name": "Standing Desk", "category": "Furniture", "price": Decimal128::from_str("349.99").unwrap(), "tags": ["adjustable", "office"] },
+        doc! { "name": "Noise-Cancelling Headphones", "category": "Electronics", "price": Decimal128::from_str("199.99").unwrap(), "tags": ["bluetooth", "wireless", "over-ear"] },
     ]
 }
 
@@ -35,10 +38,7 @@ async fn main() -> mongodb::error::Result<()> {
         .await?
         .expect("No product with the name 'Wireless Mouse' was found");
 
-    // serde_json renders the Extended JSON compactly. Insert spaces after
-    // colons and commas so the output matches the other sample applications.
-    let ejson = Bson::from(product).into_relaxed_extjson();
-    println!("{}", ejson.to_string().replace("\":", "\": ").replace(",\"", ", \""));
+    println!("{}", Bson::from(product).into_relaxed_extjson());
 
     Ok(())
 }

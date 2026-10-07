@@ -41,14 +41,4 @@ products.InsertMany(sampleProducts);
 
 var filter = Builders<BsonDocument>.Filter.Eq("name", "Wireless Mouse");
 var product = products.Find(filter).FirstOrDefault();
-
-// The .NET driver's JSON writer pads braces and colons, and wraps a decimal
-// price in a $numberDecimal object. Format the document by hand so the output
-// matches the other sample applications.
-var tags = string.Join(", ", product["tags"].AsBsonArray.Select(tag => $"\"{tag}\""));
-Console.WriteLine(
-    "{\"_id\": {\"$oid\": \"" + product["_id"] + "\"}, " +
-    "\"name\": \"" + product["name"] + "\", " +
-    "\"category\": \"" + product["category"] + "\", " +
-    "\"price\": " + product["price"] + ", " +
-    "\"tags\": [" + tags + "]}");
+Console.WriteLine(product.ToJson());

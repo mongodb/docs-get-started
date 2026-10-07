@@ -1,3 +1,6 @@
+import java.math.BigDecimal
+
+import org.bson.types.Decimal128
 import org.mongodb.scala._
 import org.mongodb.scala.model.Filters.equal
 
@@ -11,19 +14,19 @@ object HelloWorld {
     Document(
       "name" -> "Wireless Mouse",
       "category" -> "Electronics",
-      "price" -> 24.99,
+      "price" -> Decimal128(BigDecimal("24.99")),
       "tags" -> Seq("wireless", "usb", "ergonomic")
     ),
     Document(
       "name" -> "Standing Desk",
       "category" -> "Furniture",
-      "price" -> 349.99,
+      "price" -> Decimal128(BigDecimal("349.99")),
       "tags" -> Seq("adjustable", "office")
     ),
     Document(
       "name" -> "Noise-Cancelling Headphones",
       "category" -> "Electronics",
-      "price" -> 199.99,
+      "price" -> Decimal128(BigDecimal("199.99")),
       "tags" -> Seq("bluetooth", "wireless", "over-ear")
     )
   )

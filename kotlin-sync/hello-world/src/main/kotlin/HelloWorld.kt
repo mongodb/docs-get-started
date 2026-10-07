@@ -1,22 +1,24 @@
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.kotlin.client.MongoClient
+import java.math.BigDecimal
 import kotlin.system.exitProcess
 import org.bson.Document
+import org.bson.types.Decimal128
 
 // A few sample product documents seeded by this app so you can run
 // it without loading an external dataset.
 private val SAMPLE_PRODUCTS = listOf(
     Document("name", "Wireless Mouse")
         .append("category", "Electronics")
-        .append("price", 24.99)
+        .append("price", Decimal128(BigDecimal("24.99")))
         .append("tags", listOf("wireless", "usb", "ergonomic")),
     Document("name", "Standing Desk")
         .append("category", "Furniture")
-        .append("price", 349.99)
+        .append("price", Decimal128(BigDecimal("349.99")))
         .append("tags", listOf("adjustable", "office")),
     Document("name", "Noise-Cancelling Headphones")
         .append("category", "Electronics")
-        .append("price", 199.99)
+        .append("price", Decimal128(BigDecimal("199.99")))
         .append("tags", listOf("bluetooth", "wireless", "over-ear"))
 )
 

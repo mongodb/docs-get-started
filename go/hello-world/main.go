@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
-	"strings"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -95,21 +93,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(formatProduct(product))
-}
-
-func formatProduct(product Product) string {
-	tags := make([]string, len(product.Tags))
-	for i, tag := range product.Tags {
-		tags[i] = strconv.Quote(tag)
+	json, err := bson.MarshalExtJSON(product, false, false)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	return fmt.Sprintf(
-		`{"_id": {"$oid": "%s"}, "name": %s, "category": %s, "price": %s, "tags": [%s]}`,
-		product.ID.Hex(),
-		strconv.Quote(product.Name),
-		strconv.Quote(product.Category),
-		product.Price.String(),
-		strings.Join(tags, ", "),
-	)
+	fmt.Println(string(json))
 }

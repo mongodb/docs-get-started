@@ -1,5 +1,3 @@
-#include <array>
-#include <charconv>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -7,6 +5,9 @@
 
 #include <bsoncxx/builder/basic/array.hpp>
 #include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/decimal128.hpp>
+#include <bsoncxx/json.hpp>
+#include <bsoncxx/types.hpp>
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
@@ -23,19 +24,19 @@ std::vector<bsoncxx::document::value> sample_products() {
     products.push_back(make_document(
         kvp("name", "Wireless Mouse"),
         kvp("category", "Electronics"),
-        kvp("price", 24.99),
+        kvp("price", bsoncxx::types::b_decimal128{bsoncxx::decimal128{"24.99"}}),
         kvp("tags", make_array("wireless", "usb", "ergonomic"))));
 
     products.push_back(make_document(
         kvp("name", "Standing Desk"),
         kvp("category", "Furniture"),
-        kvp("price", 349.99),
+        kvp("price", bsoncxx::types::b_decimal128{bsoncxx::decimal128{"349.99"}}),
         kvp("tags", make_array("adjustable", "office"))));
 
     products.push_back(make_document(
         kvp("name", "Noise-Cancelling Headphones"),
         kvp("category", "Electronics"),
-        kvp("price", 199.99),
+        kvp("price", bsoncxx::types::b_decimal128{bsoncxx::decimal128{"199.99"}}),
         kvp("tags", make_array("bluetooth", "wireless", "over-ear"))));
 
     return products;
@@ -83,26 +84,7 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    auto view = product->view();
-
-    std::array<char, 32> buf;
-    auto [ptr, ec] = std::to_chars(
-        buf.data(), buf.data() + buf.size(), view["price"].get_double().value);
-    std::string price(buf.data(), ptr);
-
-    std::cout << "{\"_id\": {\"$oid\": \""
-              << view["_id"].get_oid().value.to_string() << "\"}"
-              << ", \"name\": \"" << view["name"].get_string().value << "\""
-              << ", \"category\": \"" << view["category"].get_string().value
-              << "\""
-              << ", \"price\": " << price << ", \"tags\": [";
-    bool first = true;
-    for (auto tag : view["tags"].get_array().value) {
-        std::cout << (first ? "" : ", ") << "\"" << tag.get_string().value
-                  << "\"";
-        first = false;
-    }
-    std::cout << "]}\n";
+    std::cout << bsoncxx::to_json(product->view()) << "\n";
 
     return EXIT_SUCCESS;
 }
