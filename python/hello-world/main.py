@@ -1,5 +1,7 @@
 import os
 
+from bson.decimal128 import Decimal128
+from bson.json_util import dumps
 from pymongo import MongoClient
 
 # A few sample product documents seeded by this app so you can run it
@@ -8,19 +10,19 @@ sample_products = [
     {
         "name": "Wireless Mouse",
         "category": "Electronics",
-        "price": 24.99,
+        "price": Decimal128("24.99"),
         "tags": ["wireless", "usb", "ergonomic"],
     },
     {
         "name": "Standing Desk",
         "category": "Furniture",
-        "price": 349.99,
+        "price": Decimal128("349.99"),
         "tags": ["adjustable", "office"],
     },
     {
         "name": "Noise-Cancelling Headphones",
         "category": "Electronics",
-        "price": 199.99,
+        "price": Decimal128("199.99"),
         "tags": ["bluetooth", "wireless", "over-ear"],
     },
 ]
@@ -41,7 +43,10 @@ def run_get_started():
 
         query = {"name": "Wireless Mouse"}
         product = products.find_one(query)
-        print(product)
+
+        # Serialize as relaxed Extended JSON so the ObjectId keeps its
+        # "$oid" wrapper while price stays a plain JSON number.
+        print(dumps(product))
     finally:
         client.close()
 

@@ -16,19 +16,19 @@ $sampleProducts = [
     [
         'name' => 'Wireless Mouse',
         'category' => 'Electronics',
-        'price' => 24.99,
+        'price' => new MongoDB\BSON\Decimal128('24.99'),
         'tags' => ['wireless', 'usb', 'ergonomic'],
     ],
     [
         'name' => 'Standing Desk',
         'category' => 'Furniture',
-        'price' => 349.99,
+        'price' => new MongoDB\BSON\Decimal128('349.99'),
         'tags' => ['adjustable', 'office'],
     ],
     [
         'name' => 'Noise-Cancelling Headphones',
         'category' => 'Electronics',
-        'price' => 199.99,
+        'price' => new MongoDB\BSON\Decimal128('199.99'),
         'tags' => ['bluetooth', 'wireless', 'over-ear'],
     ],
 ];

@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { BSON, MongoClient } from 'mongodb';
 
 // A few sample product documents seeded by this app so you can run it
 // without loading an external dataset.
@@ -6,19 +6,19 @@ const sampleProducts = [
   {
     name: 'Wireless Mouse',
     category: 'Electronics',
-    price: 24.99,
+    price: new BSON.Decimal128('24.99'),
     tags: ['wireless', 'usb', 'ergonomic']
   },
   {
     name: 'Standing Desk',
     category: 'Furniture',
-    price: 349.99,
+    price: new BSON.Decimal128('349.99'),
     tags: ['adjustable', 'office']
   },
   {
     name: 'Noise-Cancelling Headphones',
     category: 'Electronics',
-    price: 199.99,
+    price: new BSON.Decimal128('199.99'),
     tags: ['bluetooth', 'wireless', 'over-ear']
   }
 ];
@@ -38,7 +38,8 @@ async function runGetStarted() {
 
     const query = { name: 'Wireless Mouse' };
     const product = await products.findOne(query);
-    console.log(product);
+
+    console.log(BSON.EJSON.stringify(product));
   } finally {
     await client.close();
   }

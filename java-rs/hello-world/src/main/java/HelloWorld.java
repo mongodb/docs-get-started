@@ -6,8 +6,10 @@ import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
+import java.math.BigDecimal;
 import java.util.List;
 import org.bson.Document;
+import org.bson.types.Decimal128;
 import reactor.core.publisher.Mono;
 
 public class HelloWorld {
@@ -17,15 +19,15 @@ public class HelloWorld {
     private static final List<Document> SAMPLE_PRODUCTS = List.of(
         new Document("name", "Wireless Mouse")
             .append("category", "Electronics")
-            .append("price", 24.99)
+            .append("price", new Decimal128(new BigDecimal("24.99")))
             .append("tags", List.of("wireless", "usb", "ergonomic")),
         new Document("name", "Standing Desk")
             .append("category", "Furniture")
-            .append("price", 349.99)
+            .append("price", new Decimal128(new BigDecimal("349.99")))
             .append("tags", List.of("adjustable", "office")),
         new Document("name", "Noise-Cancelling Headphones")
             .append("category", "Electronics")
-            .append("price", 199.99)
+            .append("price", new Decimal128(new BigDecimal("199.99")))
             .append("tags", List.of("bluetooth", "wireless", "over-ear"))
     );
 

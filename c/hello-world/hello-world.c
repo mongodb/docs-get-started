@@ -5,7 +5,7 @@
 typedef struct {
    const char *name;
    const char *category;
-   double price;
+   const char *price;
    const char *tags[8];
    size_t tag_count;
 } sample_product_t;
@@ -13,9 +13,9 @@ typedef struct {
 /* A few sample product documents seeded by this app so you can run it
  * without loading an external dataset. */
 static const sample_product_t sample_products[] = {
-   {"Wireless Mouse", "Electronics", 24.99, {"wireless", "usb", "ergonomic"}, 3},
-   {"Standing Desk", "Furniture", 349.99, {"adjustable", "office"}, 2},
-   {"Noise-Cancelling Headphones", "Electronics", 199.99, {"bluetooth", "wireless", "over-ear"}, 3},
+   {"Wireless Mouse", "Electronics", "24.99", {"wireless", "usb", "ergonomic"}, 3},
+   {"Standing Desk", "Furniture", "349.99", {"adjustable", "office"}, 2},
+   {"Noise-Cancelling Headphones", "Electronics", "199.99", {"bluetooth", "wireless", "over-ear"}, 3},
 };
 
 #define SAMPLE_PRODUCT_COUNT (sizeof (sample_products) / sizeof (sample_products[0]))
@@ -25,10 +25,13 @@ product_to_bson (const sample_product_t *product)
 {
    bson_t *doc = bson_new ();
    bson_array_builder_t *tags;
+   bson_decimal128_t price;
 
    BSON_APPEND_UTF8 (doc, "name", product->name);
    BSON_APPEND_UTF8 (doc, "category", product->category);
-   BSON_APPEND_DOUBLE (doc, "price", product->price);
+
+   BSON_ASSERT (bson_decimal128_from_string (product->price, &price));
+   BSON_APPEND_DECIMAL128 (doc, "price", &price);
 
    bson_append_array_builder_begin (doc, "tags", -1, &tags);
    for (size_t i = 0; i < product->tag_count; i++) {
@@ -37,51 +40,6 @@ product_to_bson (const sample_product_t *product)
    bson_append_array_builder_end (doc, tags);
 
    return doc;
-}
-
-/* Prints a product document in Extended JSON format, matching the
- * output of the other sample applications. */
-static void
-print_product (const bson_t *product)
-{
-   bson_iter_t iter;
-   bson_oid_t oid;
-   char oid_str[25];
-
-   printf ("{");
-
-   if (bson_iter_init_find (&iter, product, "_id")) {
-      bson_oid_copy (bson_iter_oid (&iter), &oid);
-      bson_oid_to_string (&oid, oid_str);
-      printf ("\"_id\": {\"$oid\": \"%s\"}, ", oid_str);
-   }
-
-   if (bson_iter_init_find (&iter, product, "name")) {
-      printf ("\"name\": \"%s\", ", bson_iter_utf8 (&iter, NULL));
-   }
-
-   if (bson_iter_init_find (&iter, product, "category")) {
-      printf ("\"category\": \"%s\", ", bson_iter_utf8 (&iter, NULL));
-   }
-
-   if (bson_iter_init_find (&iter, product, "price")) {
-      printf ("\"price\": %.2f, ", bson_iter_double (&iter));
-   }
-
-   if (bson_iter_init_find (&iter, product, "tags")) {
-      bson_iter_t tags_iter;
-      bool first = true;
-
-      printf ("\"tags\": [");
-      BSON_ASSERT (bson_iter_recurse (&iter, &tags_iter));
-      while (bson_iter_next (&tags_iter)) {
-         printf ("%s\"%s\"", first ? "" : ", ", bson_iter_utf8 (&tags_iter, NULL));
-         first = false;
-      }
-      printf ("]");
-   }
-
-   printf ("}\n");
 }
 
 int
@@ -141,7 +99,9 @@ main (void)
    BSON_APPEND_UTF8 (&name_filter, "name", "Wireless Mouse");
    cursor = mongoc_collection_find_with_opts (products, &name_filter, NULL, NULL);
    if (mongoc_cursor_next (cursor, &product)) {
-      print_product (product);
+      char *json = bson_as_relaxed_extended_json (product, NULL);
+      printf ("%s\n", json);
+      bson_free (json);
    } else if (mongoc_cursor_error (cursor, &error)) {
       fprintf (stderr, "Query failed: %s\n", error.message);
       exit_code = EXIT_FAILURE;
