@@ -31,7 +31,7 @@ public class HelloWorld {
 
     public static void main(String[] args) {
         String uri = System.getenv("MONGODB_URI");
-        if (uri == null || uri.isEmpty()) {
+        if (uri == null || uri.isBlank()) {
             System.err.println("Set the MONGODB_URI environment variable to your connection string.");
             System.exit(1);
         }

@@ -46,7 +46,11 @@ object HelloWorld {
       products.deleteMany(Document()).headResult()
       products.insertMany(sampleProducts).headResult()
 
-      products.find(equal("name", "Wireless Mouse")).printHeadResult()
+      val product = products.find(equal("name", "Wireless Mouse")).results().headOption.getOrElse {
+        System.err.println("No product found matching the query.")
+        sys.exit(1)
+      }
+      println(product.toJson())
     } finally {
       client.close()
     }
