@@ -44,8 +44,10 @@ begin
   product = products.find(query).first
 
   # Serialize as relaxed Extended JSON so the ObjectId keeps its "$oid"
-  # wrapper while price stays a plain JSON number.
-  puts product.to_extended_json(mode: :relaxed)
+  # wrapper while price stays a plain JSON number. The driver's output is
+  # compact, so insert spaces after colons and commas to match the other
+  # sample applications.
+  puts product.to_extended_json(mode: :relaxed).gsub('":', '": ').gsub(',"', ', "')
 ensure
   client.close
 end

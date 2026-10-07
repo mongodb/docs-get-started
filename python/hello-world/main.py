@@ -1,5 +1,6 @@
 import os
 
+from bson.json_util import dumps
 from pymongo import MongoClient
 
 # A few sample product documents seeded by this app so you can run it
@@ -41,7 +42,10 @@ def run_get_started():
 
         query = {"name": "Wireless Mouse"}
         product = products.find_one(query)
-        print(product)
+
+        # Serialize as relaxed Extended JSON so the ObjectId keeps its
+        # "$oid" wrapper while price stays a plain JSON number.
+        print(dumps(product))
     finally:
         client.close()
 

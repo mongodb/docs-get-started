@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { BSON, MongoClient } from 'mongodb';
 
 // A few sample product documents seeded by this app so you can run it
 // without loading an external dataset.
@@ -38,7 +38,10 @@ async function runGetStarted() {
 
     const query = { name: 'Wireless Mouse' };
     const product = await products.findOne(query);
-    console.log(product);
+
+    // The driver's Extended JSON output is compact. Insert spaces after
+    // colons and commas so the output matches the other sample applications.
+    console.log(BSON.EJSON.stringify(product).replace(/":/g, '": ').replace(/,"/g, ', "'));
   } finally {
     await client.close();
   }

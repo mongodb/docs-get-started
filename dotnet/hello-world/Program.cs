@@ -1,5 +1,4 @@
 using MongoDB.Bson;
-using MongoDB.Bson.IO;
 using MongoDB.Driver;
 
 // A few sample product documents seeded by this app so you can run it
@@ -42,4 +41,14 @@ products.InsertMany(sampleProducts);
 
 var filter = Builders<BsonDocument>.Filter.Eq("name", "Wireless Mouse");
 var product = products.Find(filter).FirstOrDefault();
-Console.WriteLine(product.ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.Shell }));
+
+// The .NET driver's JSON writer pads braces and colons, and wraps a decimal
+// price in a $numberDecimal object. Format the document by hand so the output
+// matches the other sample applications.
+var tags = string.Join(", ", product["tags"].AsBsonArray.Select(tag => $"\"{tag}\""));
+Console.WriteLine(
+    "{\"_id\": {\"$oid\": \"" + product["_id"] + "\"}, " +
+    "\"name\": \"" + product["name"] + "\", " +
+    "\"category\": \"" + product["category"] + "\", " +
+    "\"price\": " + product["price"] + ", " +
+    "\"tags\": [" + tags + "]}");

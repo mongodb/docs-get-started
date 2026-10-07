@@ -95,17 +95,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(formatShellProduct(product))
+	fmt.Println(formatProduct(product))
 }
 
-func formatShellProduct(product Product) string {
+func formatProduct(product Product) string {
 	tags := make([]string, len(product.Tags))
 	for i, tag := range product.Tags {
 		tags[i] = strconv.Quote(tag)
 	}
 
 	return fmt.Sprintf(
-		`{ "_id" : ObjectId("%s"), "name" : %s, "category" : %s, "price" : NumberDecimal("%s"), "tags" : [%s] }`,
+		`{"_id": {"$oid": "%s"}, "name": %s, "category": %s, "price": %s, "tags": [%s]}`,
 		product.ID.Hex(),
 		strconv.Quote(product.Name),
 		strconv.Quote(product.Category),

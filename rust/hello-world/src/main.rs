@@ -35,7 +35,10 @@ async fn main() -> mongodb::error::Result<()> {
         .await?
         .expect("No product with the name 'Wireless Mouse' was found");
 
-    println!("{}", Bson::from(product).into_relaxed_extjson());
+    // serde_json renders the Extended JSON compactly. Insert spaces after
+    // colons and commas so the output matches the other sample applications.
+    let ejson = Bson::from(product).into_relaxed_extjson();
+    println!("{}", ejson.to_string().replace("\":", "\": ").replace(",\"", ", \""));
 
     Ok(())
 }

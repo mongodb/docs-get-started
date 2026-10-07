@@ -90,19 +90,19 @@ int main() {
         buf.data(), buf.data() + buf.size(), view["price"].get_double().value);
     std::string price(buf.data(), ptr);
 
-    std::cout << "{ \"_id\" : { \"$oid\" : \""
-              << view["_id"].get_oid().value.to_string() << "\" }"
-              << ", \"name\" : \"" << view["name"].get_string().value << "\""
-              << ", \"category\" : \"" << view["category"].get_string().value
+    std::cout << "{\"_id\": {\"$oid\": \""
+              << view["_id"].get_oid().value.to_string() << "\"}"
+              << ", \"name\": \"" << view["name"].get_string().value << "\""
+              << ", \"category\": \"" << view["category"].get_string().value
               << "\""
-              << ", \"price\" : " << price << ", \"tags\" : [";
+              << ", \"price\": " << price << ", \"tags\": [";
     bool first = true;
     for (auto tag : view["tags"].get_array().value) {
-        std::cout << (first ? " " : ", ") << "\"" << tag.get_string().value
+        std::cout << (first ? "" : ", ") << "\"" << tag.get_string().value
                   << "\"";
         first = false;
     }
-    std::cout << " ] }\n";
+    std::cout << "]}\n";
 
     return EXIT_SUCCESS;
 }

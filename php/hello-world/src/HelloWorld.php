@@ -56,4 +56,6 @@ if ($product === null) {
     exit(1);
 }
 
-echo json_encode($product), "\n";
+// The JSON output is compact. Insert spaces after colons and commas so the
+// output matches the other sample applications.
+echo str_replace(['":', ',"'], ['": ', ', "'], json_encode($product)), "\n";
