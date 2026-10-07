@@ -53,7 +53,7 @@ var sampleProducts = []Product{
 }
 
 func main() {
-	uri := os.Getenv("MONGODB_URI")
+	uri := strings.TrimSpace(os.Getenv("MONGODB_URI"))
 	if uri == "" {
 		log.Fatal("Set the MONGODB_URI environment variable before running this app.")
 	}

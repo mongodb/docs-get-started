@@ -22,7 +22,7 @@ private val SAMPLE_PRODUCTS = listOf(
 
 fun main() {
     val uri = System.getenv("MONGODB_URI")
-    if (uri.isNullOrEmpty()) {
+    if (uri.isNullOrBlank()) {
         System.err.println("Set the MONGODB_URI environment variable to your connection string.")
         exitProcess(1)
     }

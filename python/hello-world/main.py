@@ -27,7 +27,10 @@ sample_products = [
 
 
 def run_get_started():
-    uri = os.environ["MONGODB_URI"]
+    uri = os.environ.get("MONGODB_URI")
+    if not uri or not uri.strip():
+        raise SystemExit("Set the MONGODB_URI environment variable before running this app.")
+
     client = MongoClient(uri)
 
     try:
@@ -41,6 +44,9 @@ def run_get_started():
 
         query = {"name": "Wireless Mouse"}
         product = products.find_one(query)
+        if product is None:
+            raise SystemExit("No product found matching the query.")
+
         print(product)
     finally:
         client.close()

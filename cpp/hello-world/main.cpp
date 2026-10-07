@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <array>
+#include <cctype>
 #include <charconv>
 #include <cstdlib>
 #include <iostream>
@@ -43,7 +45,10 @@ std::vector<bsoncxx::document::value> sample_products() {
 
 int main() {
     const char* uri_env = std::getenv("MONGODB_URI");
-    if (uri_env == nullptr || *uri_env == '\0') {
+    std::string uri = uri_env != nullptr ? uri_env : "";
+    if (uri.empty() || std::all_of(uri.begin(), uri.end(), [](unsigned char c) {
+            return std::isspace(c) != 0;
+        })) {
         std::cerr << "Set the MONGODB_URI environment variable to your "
                      "connection string.\n";
         return EXIT_FAILURE;
@@ -53,7 +58,7 @@ int main() {
 
     mongocxx::client client;
     try {
-        client = mongocxx::client{mongocxx::uri{uri_env}};
+        client = mongocxx::client{mongocxx::uri{uri}};
     } catch (const std::exception& e) {
         std::cerr << "Failed to connect using MONGODB_URI: " << e.what() << "\n";
         return EXIT_FAILURE;

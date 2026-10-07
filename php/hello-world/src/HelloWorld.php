@@ -5,7 +5,7 @@ require __DIR__ . '/../vendor/autoload.php';
 use MongoDB\Client;
 
 $uri = getenv('MONGODB_URI');
-if ($uri === false || $uri === '') {
+if ($uri === false || trim($uri) === '') {
     fwrite(STDERR, "Set the MONGODB_URI environment variable to your connection string\n");
     exit(1);
 }
