@@ -12,7 +12,7 @@ credentials.
 
 You also need the following components installed in your development environment:
 
-- JDK version 17 or later
+- JDK version 21 or later
 - sbt
 
 ## Installation
@@ -50,9 +50,6 @@ When you run the app, it inserts a few product documents into the
 ```
 {"_id": {"$oid": "..."}, "name": "Wireless Mouse", "category": "Electronics", "price": 24.99, "tags": ["wireless", "usb", "ergonomic"]}
 ```
-
-You can run the app more than once. It clears the collection before
-each run, so the results stay consistent.
 
 If you encounter an error or see no output, verify that you set the
 `MONGODB_URI` environment variable correctly.

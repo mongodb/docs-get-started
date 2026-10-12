@@ -67,8 +67,5 @@ When you run the app, it inserts a few product documents into the
 The application prints the result in MongoDB Shell-style format, preserving
 MongoDB types such as `ObjectId` and `NumberDecimal`.
 
-You can run the app more than once. It clears the collection before
-each run, so the results stay consistent.
-
 If you encounter an error or see no output, verify that you set the
 `MONGODB_URI` environment variable correctly.
