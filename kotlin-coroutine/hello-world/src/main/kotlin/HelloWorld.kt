@@ -25,7 +25,7 @@ private val SAMPLE_PRODUCTS = listOf(
 fun main() = runBlocking {
     val uri = System.getenv("MONGODB_URI")
     if (uri.isNullOrBlank()) {
-        System.err.println("Set the MONGODB_URI environment variable to your connection string.")
+        System.err.println("Set the MONGODB_URI environment variable before running this app.")
         exitProcess(1)
     }
 

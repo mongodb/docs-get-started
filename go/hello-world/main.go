@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -53,8 +54,8 @@ var sampleProducts = []Product{
 }
 
 func main() {
-	uri := strings.TrimSpace(os.Getenv("MONGODB_URI"))
-	if uri == "" {
+	uri := os.Getenv("MONGODB_URI")
+	if strings.TrimSpace(uri) == "" {
 		log.Fatal("Set the MONGODB_URI environment variable before running this app.")
 	}
 
@@ -92,6 +93,9 @@ func main() {
 	var product Product
 	filter := bson.D{{Key: "name", Value: "Wireless Mouse"}}
 	if err := products.FindOne(ctx, filter).Decode(&product); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			log.Fatal("No product found matching the query.")
+		}
 		log.Fatal(err)
 	}
 

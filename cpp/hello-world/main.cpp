@@ -49,8 +49,8 @@ int main() {
     if (uri.empty() || std::all_of(uri.begin(), uri.end(), [](unsigned char c) {
             return std::isspace(c) != 0;
         })) {
-        std::cerr << "Set the MONGODB_URI environment variable to your "
-                     "connection string.\n";
+        std::cerr << "Set the MONGODB_URI environment variable before "
+                     "running this app.\n";
         return EXIT_FAILURE;
     }
 

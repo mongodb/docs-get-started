@@ -6,7 +6,7 @@ use MongoDB\Client;
 
 $uri = getenv('MONGODB_URI');
 if ($uri === false || trim($uri) === '') {
-    fwrite(STDERR, "Set the MONGODB_URI environment variable to your connection string\n");
+    fwrite(STDERR, "Set the MONGODB_URI environment variable before running this app.\n");
     exit(1);
 }
 
@@ -52,7 +52,7 @@ if (!$insertResult->isAcknowledged()) {
 
 $product = $products->findOne(['name' => 'Wireless Mouse']);
 if ($product === null) {
-    fwrite(STDERR, "No product found matching the query\n");
+    fwrite(STDERR, "No product found matching the query.\n");
     exit(1);
 }
 
