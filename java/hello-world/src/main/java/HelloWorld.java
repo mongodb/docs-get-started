@@ -28,6 +28,10 @@ public class HelloWorld {
 
     public static void main(String[] args) {
         String uri = System.getenv("MONGODB_URI");
+        if (uri == null || uri.isBlank()) {
+            System.err.println("Set the MONGODB_URI environment variable before running this app.");
+            System.exit(1);
+        }
 
         try (MongoClient client = MongoClients.create(uri)) {
             MongoDatabase database = client.getDatabase("get_started");
@@ -40,6 +44,10 @@ public class HelloWorld {
             products.insertMany(SAMPLE_PRODUCTS);
 
             Document product = products.find(eq("name", "Wireless Mouse")).first();
+            if (product == null) {
+                System.err.println("No product found matching the query.");
+                System.exit(1);
+            }
             System.out.println(product.toJson());
         }
     }

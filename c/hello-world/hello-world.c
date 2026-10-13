@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <mongoc/mongoc.h>
@@ -84,6 +85,18 @@ print_product (const bson_t *product)
    printf ("}\n");
 }
 
+/* Returns true if the value is empty or contains only whitespace. */
+static int
+is_blank (const char *value)
+{
+   for (const char *p = value; *p; p++) {
+      if (!isspace ((unsigned char) *p)) {
+         return 0;
+      }
+   }
+   return 1;
+}
+
 int
 main (void)
 {
@@ -99,7 +112,7 @@ main (void)
    int exit_code = EXIT_SUCCESS;
 
    uri_string = getenv ("MONGODB_URI");
-   if (!uri_string || !*uri_string) {
+   if (!uri_string || is_blank (uri_string)) {
       fprintf (stderr, "Set the MONGODB_URI environment variable before running this app.\n");
       return EXIT_FAILURE;
    }
@@ -144,6 +157,9 @@ main (void)
       print_product (product);
    } else if (mongoc_cursor_error (cursor, &error)) {
       fprintf (stderr, "Query failed: %s\n", error.message);
+      exit_code = EXIT_FAILURE;
+   } else {
+      fprintf (stderr, "No product found matching the query.\n");
       exit_code = EXIT_FAILURE;
    }
    mongoc_cursor_destroy (cursor);

@@ -25,6 +25,10 @@ const sampleProducts = [
 
 async function runGetStarted() {
   const uri = process.env.MONGODB_URI;
+  if (!uri || !uri.trim()) {
+    throw new Error('Set the MONGODB_URI environment variable before running this app.');
+  }
+
   const client = new MongoClient(uri);
 
   try {
@@ -38,9 +42,16 @@ async function runGetStarted() {
 
     const query = { name: 'Wireless Mouse' };
     const product = await products.findOne(query);
+    if (!product) {
+      throw new Error('No product found matching the query.');
+    }
+
     console.log(product);
   } finally {
     await client.close();
   }
 }
-runGetStarted().catch(console.dir);
+runGetStarted().catch((error) => {
+  console.error(error.message);
+  process.exit(1);
+});
