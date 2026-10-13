@@ -61,11 +61,8 @@ When you run the app, it inserts a few product documents into the
 `get_started.products` collection, then queries and prints one of them:
 
 ```
-{ "_id" : ObjectId("..."), "name" : "Wireless Mouse", "category" : "Electronics", "price" : NumberDecimal("24.99"), "tags" : ["wireless", "usb", "ergonomic"] }
+{"_id":{"$oid":"..."},"name":"Wireless Mouse","category":"Electronics","price":{"$numberDecimal":"24.99"},"tags":["wireless","usb","ergonomic"]}
 ```
-
-The application prints the result in MongoDB Shell-style format, preserving
-MongoDB types such as `ObjectId` and `NumberDecimal`.
 
 If you encounter an error or see no output, verify that you set the
 `MONGODB_URI` environment variable correctly.

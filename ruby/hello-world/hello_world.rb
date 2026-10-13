@@ -7,19 +7,19 @@ SAMPLE_PRODUCTS = [
   {
     name: 'Wireless Mouse',
     category: 'Electronics',
-    price: 24.99,
+    price: BSON::Decimal128.new('24.99'),
     tags: ['wireless', 'usb', 'ergonomic']
   },
   {
     name: 'Standing Desk',
     category: 'Furniture',
-    price: 349.99,
+    price: BSON::Decimal128.new('349.99'),
     tags: ['adjustable', 'office']
   },
   {
     name: 'Noise-Cancelling Headphones',
     category: 'Electronics',
-    price: 199.99,
+    price: BSON::Decimal128.new('199.99'),
     tags: ['bluetooth', 'wireless', 'over-ear']
   }
 ].freeze
@@ -46,8 +46,11 @@ begin
     abort 'No product found matching the query.'
   end
 
-  # Serialize as relaxed Extended JSON so the ObjectId keeps its "$oid"
-  # wrapper while price stays a plain JSON number.
+  # The driver returns a Decimal128 as a BigDecimal, which doesn't serialize
+  # as "$numberDecimal". Convert it back so the output matches the other
+  # sample applications.
+  product['price'] = BSON::Decimal128.new(product['price'])
+
   puts product.to_extended_json(mode: :relaxed)
 ensure
   client.close

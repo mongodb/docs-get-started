@@ -1,5 +1,4 @@
 using MongoDB.Bson;
-using MongoDB.Bson.IO;
 using MongoDB.Driver;
 
 // A few sample product documents seeded by this app so you can run it
@@ -54,4 +53,4 @@ if (product is null)
     Environment.Exit(1);
 }
 
-Console.WriteLine(product.ToJson(new JsonWriterSettings { OutputMode = JsonOutputMode.Shell }));
+Console.WriteLine(product.ToJson());

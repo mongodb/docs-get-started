@@ -90,7 +90,7 @@ When you run the app, it inserts a few product documents into the
 `get_started.products` collection, then queries and prints one of them:
 
 ```
-{"_id":{"$oid":"..."},"name":"Wireless Mouse","category":"Electronics","price":24.99,"tags":["wireless","usb","ergonomic"]}
+{"_id":{"$oid":"..."},"name":"Wireless Mouse","category":"Electronics","price":{"$numberDecimal":"24.99"},"tags":["wireless","usb","ergonomic"]}
 ```
 
 If you encounter an error or see no output, verify that you set the
