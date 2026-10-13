@@ -45,7 +45,8 @@ def run_get_started():
         product = products.find_one(query)
 
         # Serialize as relaxed Extended JSON so the ObjectId keeps its
-        # "$oid" wrapper while price stays a plain JSON number.
+        # "$oid" wrapper and the Decimal128 price keeps its
+        # "$numberDecimal" wrapper.
         print(dumps(product))
     finally:
         client.close()
