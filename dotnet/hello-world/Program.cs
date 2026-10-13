@@ -29,6 +29,12 @@ var sampleProducts = new[]
 };
 
 var uri = Environment.GetEnvironmentVariable("MONGODB_URI");
+if (string.IsNullOrWhiteSpace(uri))
+{
+    Console.Error.WriteLine("Set the MONGODB_URI environment variable before running this app.");
+    Environment.Exit(1);
+}
+
 var client = new MongoClient(uri);
 
 var database = client.GetDatabase("get_started");
@@ -41,4 +47,10 @@ products.InsertMany(sampleProducts);
 
 var filter = Builders<BsonDocument>.Filter.Eq("name", "Wireless Mouse");
 var product = products.Find(filter).FirstOrDefault();
+if (product is null)
+{
+    Console.Error.WriteLine("No product found matching the query.");
+    Environment.Exit(1);
+}
+
 Console.WriteLine(product.ToJson());

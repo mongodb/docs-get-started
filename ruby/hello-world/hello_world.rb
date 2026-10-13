@@ -25,7 +25,7 @@ SAMPLE_PRODUCTS = [
 ].freeze
 
 uri = ENV['MONGODB_URI']
-if uri.nil? || uri.empty?
+if uri.nil? || uri.strip.empty?
   abort 'Set the MONGODB_URI environment variable before running this app.'
 end
 
@@ -42,6 +42,9 @@ begin
 
   query = { name: 'Wireless Mouse' }
   product = products.find(query).first
+  if product.nil?
+    abort 'No product found matching the query.'
+  end
 
   # The driver returns a Decimal128 as a BigDecimal, which doesn't serialize
   # as "$numberDecimal". Convert it back so the output matches the other

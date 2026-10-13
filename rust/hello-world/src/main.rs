@@ -36,7 +36,7 @@ async fn main() -> mongodb::error::Result<()> {
     let product = products
         .find_one(doc! { "name": "Wireless Mouse" })
         .await?
-        .expect("No product with the name 'Wireless Mouse' was found");
+        .expect("No product found matching the query.");
 
     println!("{}", Bson::from(product).into_relaxed_extjson());
 
