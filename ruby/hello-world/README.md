@@ -23,6 +23,8 @@ gem install bundler
 
 > **Note:** The Ruby driver is not officially supported on Windows.
 
+The commands in this guide assume a Bash compatible shell.
+
 ## Installation
 
 Clone this repository:

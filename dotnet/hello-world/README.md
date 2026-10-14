@@ -13,6 +13,8 @@ credentials.
 You also need the .NET SDK 10.0 or later installed in your development
 environment.
 
+The commands in this guide assume a Bash compatible shell.
+
 ## Installation
 
 Clone this repository:

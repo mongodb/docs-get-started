@@ -15,6 +15,8 @@ You also need the following components installed in your development environment
 - Python 3 version 3.9 or later
 - pip
 
+The commands in this guide assume a Bash compatible shell.
+
 ## Installation
 
 Clone this repository:
@@ -36,8 +38,8 @@ python3 -m pip install -r requirements.txt
 On Windows, activate the virtual environment with the following command
 instead:
 
-```powershell
-. venv\Scripts\activate
+```bash
+source venv/Scripts/activate
 ```
 
 ## Connect to MongoDB

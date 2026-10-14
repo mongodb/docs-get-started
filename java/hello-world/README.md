@@ -15,6 +15,8 @@ You also need the following components installed in your development environment
 - JDK version 21 or later
 - Maven
 
+The commands in this guide assume a Bash compatible shell.
+
 ## Installation
 
 Clone this repository:
