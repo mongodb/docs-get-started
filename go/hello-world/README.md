@@ -12,6 +12,8 @@ credentials.
 
 You also need Go 1.25.1 or later installed in your development environment.
 
+The commands in this guide assume a Bash compatible shell.
+
 ## Installation
 
 Clone this repository:

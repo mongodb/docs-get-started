@@ -15,6 +15,8 @@ You also need the following components installed in your development environment
 - Node.js v16.20.1 or later
 - npm
 
+The commands in this guide assume a Bash compatible shell.
+
 ## Installation
 
 Clone this repository:

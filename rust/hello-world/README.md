@@ -13,6 +13,8 @@ credentials.
 You also need Rust version 1.88 or later installed in your development
 environment.
 
+The commands in this guide assume a Bash compatible shell.
+
 ## Installation
 
 Clone this repository:
