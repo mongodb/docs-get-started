@@ -1,0 +1,51 @@
+name: Test hello-world apps
+
+# Runs each hello-world sample the way its README tells readers to, against
+# a local MongoDB, and checks its output and setup-error behavior.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Each language runs in its official toolchain image. To add a
+        # language, add its commands to tests/test-app.sh and an entry here.
+        # Match the image version to the minimum in the app's README.
+        include:
+          - language: go
+            image: golang:1.25
+          - language: ruby
+            image: ruby:3.3
+          - language: kotlin-sync
+            image: maven:3-eclipse-temurin-21
+          - language: kotlin-coroutine
+            image: maven:3-eclipse-temurin-21
+
+    # The job runs in a container so it can reach the MongoDB service by
+    # name without publishing a host port. This also lets the workflow run
+    # locally with `act` on a machine that already uses port 27017.
+    container: ${{ matrix.image }}
+
+    services:
+      mongodb:
+        image: mongo:8.0
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install jq
+        run: apt-get update && apt-get install -y --no-install-recommends jq
+
+      - name: Run app test
+        env:
+          MONGODB_URI: mongodb://mongodb:27017
+        run: bash tests/test-app.sh ${{ matrix.language }}
