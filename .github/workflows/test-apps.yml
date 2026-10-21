@@ -13,7 +13,12 @@ permissions:
 jobs:
   test:
     name: ${{ matrix.language }}
-    runs-on: ubuntu-latest
+    # MongoDB 8.0 refuses to start on the newer kernels in ubuntu-24.04 and
+    # later runner images, because it misreads their kernel version
+    # (SERVER-131779). Use ubuntu-22.04 until a MongoDB 8.0 release with the
+    # fix (8.0.35) is available, then return to ubuntu-latest.
+    # See https://github.com/actions/runner-images/issues/15005.
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
