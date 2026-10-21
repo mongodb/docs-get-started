@@ -140,12 +140,18 @@ if actual=$(run 2>&1); then
   # Compare as JSON, not text: drivers differ in whitespace, and _id is a
   # new ObjectId on every run, so check only that it is an $oid.
   normalize='if (._id | type) == "object" and (._id | has("$oid")) then del(._id) else error("_id is not an $oid") end'
-  exp_doc=$(jq -cS "$normalize" <<<"$expected" 2>&1)
   # Build tools such as Maven print their own logs around the app's output,
   # so pick out the app's JSON line rather than assuming it is the last line.
   act_line=$(grep '"Wireless Mouse"' <<<"$actual" | tail -n 1)
-  act_doc=$(jq -cS "$normalize" <<<"${act_line:-<no line containing \"Wireless Mouse\" in app output>}" 2>&1)
-  if [ "$exp_doc" = "$act_doc" ]; then
+  # Both sides must normalize successfully before they are compared.
+  # Otherwise two identical jq error messages would count as a match.
+  if ! exp_doc=$(jq -cS "$normalize" <<<"$expected" 2>&1); then
+    record fail "output matches README" "Could not read the README's expected output as a document with an \$oid _id:"$'\n'"$exp_doc"
+  elif [ -z "$act_line" ]; then
+    record fail "output matches README" "No line containing \"Wireless Mouse\" in the app's output:"$'\n'"$actual"
+  elif ! act_doc=$(jq -cS "$normalize" <<<"$act_line" 2>&1); then
+    record fail "output matches README" "Could not read the app's output as a document with an \$oid _id:"$'\n'"$act_line"$'\n'"$act_doc"
+  elif [ "$exp_doc" = "$act_doc" ]; then
     record pass "output matches README"
   else
     record fail "output matches README" "expected: $exp_doc"$'\n'"actual:   $act_doc"
