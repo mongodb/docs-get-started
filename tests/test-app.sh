@@ -32,9 +32,38 @@ case "$LANGUAGE" in
     install() { bundle install; }
     run() { bundle exec ruby hello_world.rb; }
     ;;
-  kotlin-sync|kotlin-coroutine)
+  java|java-rs|kotlin-sync|kotlin-coroutine)
     install() { mvn compile; }
     run() { mvn compile exec:java; }
+    ;;
+  scala)
+    # The README has no separate install step; `sbt run` resolves
+    # dependencies itself. Compile first so a dependency or build failure
+    # is reported as an install failure.
+    install() { sbt compile; }
+    run() { sbt run; }
+    ;;
+  dotnet)
+    install() { dotnet restore; }
+    run() { dotnet run; }
+    ;;
+  rust)
+    install() { cargo build; }
+    run() { cargo run; }
+    ;;
+  node)
+    install() { npm install; }
+    run() { node index.js; }
+    ;;
+  python)
+    install() { python3 -m venv venv && source venv/bin/activate && python3 -m pip install -r requirements.txt; }
+    run() { source venv/bin/activate && python3 main.py; }
+    ;;
+  php)
+    # The README installs the mongodb extension with PIE before this step.
+    # In CI, the workflow does that; locally, install it first.
+    install() { composer install; }
+    run() { php src/HelloWorld.php; }
     ;;
   *)
     echo "FAIL: no commands defined for '$LANGUAGE' in tests/test-app.sh"
