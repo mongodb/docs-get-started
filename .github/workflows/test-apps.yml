@@ -1,0 +1,98 @@
+name: Test hello-world apps
+
+# Runs each hello-world sample the way its README tells readers to, against
+# a local MongoDB, and checks its output and setup-error behavior.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.language }}
+    # MongoDB 8.0 refuses to start on the newer kernels in ubuntu-24.04 and
+    # later runner images, because it misreads their kernel version
+    # (SERVER-131779). Use ubuntu-22.04 until a MongoDB 8.0 release with the
+    # fix (8.0.35) is available, then return to ubuntu-latest.
+    # See https://github.com/actions/runner-images/issues/15005.
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # Each language runs in its official toolchain image. To add a
+        # language, add its commands to tests/test-app.sh and an entry here.
+        # Match the image version to the minimum in the app's README.
+        include:
+          - language: c
+            image: ubuntu:24.04
+          - language: cpp
+            image: ubuntu:24.04
+          - language: go
+            image: golang:1.25
+          - language: ruby
+            image: ruby:3.3
+          - language: java
+            image: maven:3-eclipse-temurin-21
+          - language: java-rs
+            image: maven:3-eclipse-temurin-21
+          - language: kotlin-sync
+            image: maven:3-eclipse-temurin-21
+          - language: kotlin-coroutine
+            image: maven:3-eclipse-temurin-21
+          - language: scala
+            image: sbtscala/scala-sbt:eclipse-temurin-21_2.x
+          - language: dotnet
+            image: mcr.microsoft.com/dotnet/sdk:10.0
+          - language: rust
+            image: rust:1.88
+          - language: node
+            image: node:20.19.0
+          - language: python
+            image: python:3.11
+          - language: php
+            image: php:8.2-cli
+
+    # The job runs in a container so it can reach the MongoDB service by
+    # name without publishing a host port. This also lets the workflow run
+    # locally with `act` on a machine that already uses port 27017.
+    container: ${{ matrix.image }}
+
+    services:
+      mongodb:
+        image: mongo:8.0
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install jq
+        run: apt-get update && apt-get install -y --no-install-recommends jq
+
+      # The PHP image has no Composer or PIE. Install both, then install the
+      # mongodb extension with the same pinned PIE command as the README.
+      - name: Set up PHP extension and Composer
+        if: matrix.language == 'php'
+        run: |
+          apt-get install -y --no-install-recommends git unzip autoconf automake libtool m4 make gcc libssl-dev pkg-config
+          curl -fsSL -o /usr/local/bin/pie https://github.com/php/pie/releases/latest/download/pie.phar
+          chmod +x /usr/local/bin/pie
+          pie install mongodb/mongodb-extension:2.5.5
+          curl -fsSL https://getcomposer.org/installer | php -- --quiet --install-dir=/usr/local/bin --filename=composer
+
+      # The Ubuntu image has no build tools, CMake, or vcpkg. vcpkg builds
+      # the driver from source on first run, using the version pinned in
+      # the app's vcpkg.json, so this step is slow the first time.
+      - name: Set up vcpkg and build tools
+        if: matrix.language == 'c' || matrix.language == 'cpp'
+        run: |
+          apt-get install -y --no-install-recommends ca-certificates build-essential cmake git curl zip unzip tar pkg-config ninja-build
+          git clone -q https://github.com/microsoft/vcpkg "$RUNNER_TEMP/vcpkg"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
+
+      - name: Run app test
+        env:
+          MONGODB_URI: mongodb://mongodb:27017
+        run: bash tests/test-app.sh ${{ matrix.language }}

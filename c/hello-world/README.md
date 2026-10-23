@@ -28,7 +28,7 @@ git clone https://github.com/mongodb/docs-get-started
 
 ### Install the MongoDB C Driver
 
-This project requires MongoDB C driver 2.0 or later. Install it with your
+This project requires MongoDB C driver 2.5 or later. Install it with your
 platform's package manager.
 
 <details open>
@@ -40,13 +40,6 @@ On macOS, install the MongoDB C driver with [Homebrew](https://brew.sh/):
 brew install mongo-c-driver
 ```
 
-On Linux, most distribution packages are too old to satisfy this
-requirement. Use vcpkg instead:
-
-```bash
-vcpkg install mongo-c-driver
-```
-
 Navigate into the project directory, then configure and build:
 
 ```bash
@@ -55,33 +48,41 @@ cmake -S . -B build
 cmake --build build
 ```
 
-If you installed the driver with vcpkg, add the vcpkg toolchain file to
-the configure step so CMake can locate it, replacing `<vcpkg root>` with
-your vcpkg installation path:
+On Linux, use vcpkg to install the MongoDB C driver. Navigate into the
+project directory and install it, replacing `<vcpkg root>` with your
+vcpkg installation path:
+
+```bash
+cd docs-get-started/c/hello-world
+<vcpkg root>/vcpkg install
+```
+
+Then configure and build:
 
 ```bash
 cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=<vcpkg root>/scripts/buildsystems/vcpkg.cmake
+cmake --build build
 ```
 </details>
 
 <details open>
 <summary><strong>Windows </strong></summary>
 
-On Windows, use vcpkg to install the MongoDB C driver:
-
-```bash
-vcpkg install mongo-c-driver
-```
-
-Navigate into the project directory, then configure and build:
+On Windows, navigate into the project directory and use vcpkg to
+install the MongoDB C driver, replacing `<vcpkg root>` with your
+vcpkg installation path:
 
 ```bash
 cd docs-get-started/c/hello-world
+<vcpkg root>/vcpkg install
+```
+
+Then configure and build:
+
+```bash
 cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=<vcpkg root>/scripts/buildsystems/vcpkg.cmake
 cmake --build build --config Release
 ```
-
-Replace `<vcpkg root>` with your vcpkg installation path.
 </details>
 
 For other installation methods, see the
