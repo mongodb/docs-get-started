@@ -3,11 +3,25 @@
 # driver bump is tested against the app before it merges.
 #
 # Each app's dependencies are grouped so that an app gets at most one
-# pull request per week. C and C++ are not listed because their drivers are
-# installed through system package managers, not a project file.
+# pull request per week.
+#
+# C and C++ are pinned only for the vcpkg install path (Linux and
+# Windows), via each app's vcpkg.json builtin-baseline. Homebrew readers
+# on macOS always get the latest release and are not covered by this
+# file or by CI.
 version: 2
 
 updates:
+  - package-ecosystem: vcpkg
+    directory: /c/hello-world
+    schedule: { interval: weekly }
+    groups: { c: { patterns: ["*"] } }
+
+  - package-ecosystem: vcpkg
+    directory: /cpp/hello-world
+    schedule: { interval: weekly }
+    groups: { cpp: { patterns: ["*"] } }
+
   - package-ecosystem: gomod
     directory: /go/hello-world
     schedule: { interval: weekly }

@@ -26,6 +26,10 @@ jobs:
         # language, add its commands to tests/test-app.sh and an entry here.
         # Match the image version to the minimum in the app's README.
         include:
+          - language: c
+            image: ubuntu:24.04
+          - language: cpp
+            image: ubuntu:24.04
           - language: go
             image: golang:1.25
           - language: ruby
@@ -76,6 +80,17 @@ jobs:
           chmod +x /usr/local/bin/pie
           pie install mongodb/mongodb-extension:2.5.5
           curl -fsSL https://getcomposer.org/installer | php -- --quiet --install-dir=/usr/local/bin --filename=composer
+
+      # The Ubuntu image has no build tools, CMake, or vcpkg. vcpkg builds
+      # the driver from source on first run, using the version pinned in
+      # the app's vcpkg.json, so this step is slow the first time.
+      - name: Set up vcpkg and build tools
+        if: matrix.language == 'c' || matrix.language == 'cpp'
+        run: |
+          apt-get install -y --no-install-recommends ca-certificates build-essential cmake git curl zip unzip tar pkg-config ninja-build
+          git clone -q https://github.com/microsoft/vcpkg "$RUNNER_TEMP/vcpkg"
+          "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+          echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
 
       - name: Run app test
         env:

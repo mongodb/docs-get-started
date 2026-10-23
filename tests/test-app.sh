@@ -12,6 +12,8 @@
 # commands from the README and inspects exit codes and output.
 #
 # Usage: MONGODB_URI=<uri> tests/test-app.sh <language>
+# C and C++ also require VCPKG_ROOT (the vcpkg checkout used to resolve the
+# project's vcpkg.json manifest).
 # Requires: jq
 set -uo pipefail
 
@@ -24,6 +26,17 @@ cd "$APP_DIR" || { echo "FAIL: no app at $APP_DIR"; exit 1; }
 
 # Install and run commands for each language, copied from its README.
 case "$LANGUAGE" in
+  c|cpp)
+    : "${VCPKG_ROOT:?Set VCPKG_ROOT to a vcpkg checkout to test $LANGUAGE.}"
+    # The project's vcpkg.json manifest pins the driver version. Passing
+    # the vcpkg toolchain file is what tells CMake to resolve it, the same
+    # step the README's Linux/Windows instructions use.
+    install() {
+      cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
+      cmake --build build
+    }
+    run() { ./build/hello-world; }
+    ;;
   go)
     install() { go mod download; }
     run() { go run .; }
