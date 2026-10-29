@@ -9,7 +9,8 @@ find_package(mongocxx 4.4 REQUIRED)
 
 add_executable(hello-world main.cpp)
 
-# Homebrew installs shared libraries; vcpkg's default Linux/Windows triplet
-# installs static ones. Link whichever target the installed driver provides.
+# Homebrew, and vcpkg on Windows, build the driver as a shared library.
+# vcpkg on Linux builds it as a static library instead. Link whichever
+# one the installed driver provides.
 target_link_libraries(hello-world PRIVATE
     $<IF:$<TARGET_EXISTS:mongo::mongocxx_static>,mongo::mongocxx_static,mongo::mongocxx_shared>)

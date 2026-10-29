@@ -28,10 +28,8 @@ cd "$APP_DIR" || { echo "FAIL: no app at $APP_DIR"; exit 1; }
 case "$LANGUAGE" in
   c|cpp)
     : "${VCPKG_ROOT:?Set VCPKG_ROOT to a vcpkg checkout to test $LANGUAGE.}"
-    # The project's vcpkg.json manifest pins the driver version. Passing
-    # the vcpkg toolchain file is what tells CMake to resolve it, the same
-    # step the README's Linux/Windows instructions use.
     install() {
+      "$VCPKG_ROOT/vcpkg" install
       cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
       cmake --build build
     }

@@ -12,7 +12,7 @@ credentials.
 
 You also need the following components installed in your development environment:
 
-- Python 3 version 3.11 or later
+- Python 3.11 or later
 - pip
 
 The commands in this guide assume a Bash compatible shell.

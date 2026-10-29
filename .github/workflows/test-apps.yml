@@ -19,6 +19,7 @@ jobs:
     # fix (8.0.35) is available, then return to ubuntu-latest.
     # See https://github.com/actions/runner-images/issues/15005.
     runs-on: ubuntu-22.04
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -31,7 +32,7 @@ jobs:
           - language: cpp
             image: ubuntu:24.04
           - language: go
-            image: golang:1.25
+            image: golang:1.25.1
           - language: ruby
             image: ruby:3.3
           - language: java
@@ -43,7 +44,7 @@ jobs:
           - language: kotlin-coroutine
             image: maven:3-eclipse-temurin-21
           - language: scala
-            image: sbtscala/scala-sbt:eclipse-temurin-21_2.x
+            image: sbtscala/scala-sbt:eclipse-temurin-21.0.12.1_1_1.13.1_3.3.9
           - language: dotnet
             image: mcr.microsoft.com/dotnet/sdk:10.0
           - language: rust

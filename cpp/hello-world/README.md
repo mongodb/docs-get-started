@@ -29,7 +29,7 @@ git clone https://github.com/mongodb/docs-get-started
 ### Install the MongoDB C++ Driver
 
 This project requires MongoDB C++ driver (mongocxx) 4.4 or later. Install
-it with your platform's package manager.
+it with Homebrew on macOS, or vcpkg on Linux and Windows.
 
 <details open>
 <summary><strong>macOS / Linux </strong></summary>
@@ -40,7 +40,7 @@ On macOS, install the MongoDB C++ driver with [Homebrew](https://brew.sh/):
 brew install mongo-cxx-driver
 ```
 
-Navigate into the project directory, then configure and build:
+Then, configure and build:
 
 ```bash
 cd docs-get-started/cpp/hello-world
@@ -48,9 +48,8 @@ cmake -S . -B build
 cmake --build build
 ```
 
-On Linux, use vcpkg to install the MongoDB C++ driver. Navigate into
-the project directory and install it, replacing `<vcpkg root>` with
-your vcpkg installation path:
+On Linux, use vcpkg to install the MongoDB C++ driver, replacing
+`<vcpkg root>` with your vcpkg installation path:
 
 ```bash
 cd docs-get-started/cpp/hello-world
@@ -68,9 +67,8 @@ cmake --build build
 <details open>
 <summary><strong>Windows </strong></summary>
 
-On Windows, navigate into the project directory and use vcpkg to
-install the MongoDB C++ driver, replacing `<vcpkg root>` with your
-vcpkg installation path:
+On Windows, use vcpkg to install the MongoDB C++ driver, replacing
+`<vcpkg root>` with your vcpkg installation path:
 
 ```bash
 cd docs-get-started/cpp/hello-world
@@ -84,9 +82,6 @@ cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=<vcpkg root>/scripts/buildsystems/vcp
 cmake --build build --config Release
 ```
 </details>
-
-For other installation methods, see the
-[C++ driver installation guide](https://www.mongodb.com/docs/languages/cpp/cpp-driver/current/installation/).
 
 ## Connect to MongoDB
 
