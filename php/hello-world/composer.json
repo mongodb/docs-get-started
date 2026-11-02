@@ -4,7 +4,7 @@
     "type": "project",
     "require": {
         "php": ">=8.2",
-        "ext-mongodb": "^2.0",
-        "mongodb/mongodb": "^2.0"
+        "ext-mongodb": "^2.5",
+        "mongodb/mongodb": "2.5.0"
     }
 }

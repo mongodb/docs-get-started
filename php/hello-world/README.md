@@ -32,14 +32,14 @@ The `mongodb` extension is a native PHP extension, so Composer can't
 install it for you. Install it with PIE:
 
 ```bash
-pie install mongodb/mongodb-extension
+pie install mongodb/mongodb-extension:2.5.5
 ```
 
 On Windows, PIE is distributed as a PHAR rather than an executable, so
 run it through `php` from the directory containing `pie.phar`:
 
 ```bash
-php pie.phar install mongodb/mongodb-extension
+php pie.phar install mongodb/mongodb-extension:2.5.5
 ```
 
 PIE requires elevated privileges to write the extension into your PHP
@@ -154,7 +154,7 @@ sudo apt-get install libssl-dev
 Then rebuild the extension:
 
 ```bash
-pie install --force mongodb/mongodb-extension
+pie install --force mongodb/mongodb-extension:2.5.5
 ```
 
 `php --ri mongodb | grep SSL` should now report

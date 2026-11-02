@@ -1,0 +1,76 @@
+# Opens pull requests when a newer version of a pinned dependency is
+# available. The test-apps workflow runs on each pull request, so every
+# driver bump is tested against the app before it merges.
+#
+# Each app's dependencies are grouped so that an app gets at most one
+# pull request per week.
+#
+# C and C++ are pinned only for the vcpkg install path (Linux and
+# Windows), via each app's vcpkg.json builtin-baseline. Homebrew readers
+# on macOS always get the latest release and are not covered by this
+# file or by CI.
+version: 2
+
+updates:
+  - package-ecosystem: vcpkg
+    directory: /c/hello-world
+    schedule: { interval: weekly }
+    groups: { c: { patterns: ["*"] } }
+
+  - package-ecosystem: vcpkg
+    directory: /cpp/hello-world
+    schedule: { interval: weekly }
+    groups: { cpp: { patterns: ["*"] } }
+
+  - package-ecosystem: gomod
+    directory: /go/hello-world
+    schedule: { interval: weekly }
+    groups: { go: { patterns: ["*"] } }
+
+  - package-ecosystem: bundler
+    directory: /ruby/hello-world
+    schedule: { interval: weekly }
+    groups: { ruby: { patterns: ["*"] } }
+
+  - package-ecosystem: maven
+    directories:
+      - /java/hello-world
+      - /java-rs/hello-world
+      - /kotlin-sync/hello-world
+      - /kotlin-coroutine/hello-world
+    schedule: { interval: weekly }
+    groups: { jvm: { patterns: ["*"] } }
+
+  - package-ecosystem: sbt
+    directory: /scala/hello-world
+    schedule: { interval: weekly }
+    groups: { scala: { patterns: ["*"] } }
+
+  - package-ecosystem: nuget
+    directory: /dotnet/hello-world
+    schedule: { interval: weekly }
+    groups: { dotnet: { patterns: ["*"] } }
+
+  - package-ecosystem: cargo
+    directory: /rust/hello-world
+    schedule: { interval: weekly }
+    groups: { rust: { patterns: ["*"] } }
+
+  - package-ecosystem: npm
+    directory: /node/hello-world
+    schedule: { interval: weekly }
+    groups: { node: { patterns: ["*"] } }
+
+  - package-ecosystem: pip
+    directory: /python/hello-world
+    schedule: { interval: weekly }
+    groups: { python: { patterns: ["*"] } }
+
+  - package-ecosystem: composer
+    directory: /php/hello-world
+    schedule: { interval: weekly }
+    groups: { php: { patterns: ["*"] } }
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
