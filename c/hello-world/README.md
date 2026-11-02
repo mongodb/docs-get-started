@@ -115,9 +115,3 @@ When you run the app, it inserts a few product documents into the
 
 If you encounter an error or see no output, verify that you set the
 `MONGODB_URI` environment variable correctly.
-
-## Additional Resources
-
-For other installation methods, such as building from source, see
-the C driver's [Custom Installation](https://www.mongodb.com/docs/languages/c/c-driver/current/install-from-source/)
-guide.

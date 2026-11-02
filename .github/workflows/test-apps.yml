@@ -66,7 +66,7 @@ jobs:
         image: mongo:8.0
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
 
       - name: Install jq
         run: apt-get update && apt-get install -y --no-install-recommends jq
@@ -77,10 +77,11 @@ jobs:
         if: matrix.language == 'php'
         run: |
           apt-get install -y --no-install-recommends git unzip autoconf automake libtool m4 make gcc libssl-dev pkg-config
-          curl -fsSL -o /usr/local/bin/pie https://github.com/php/pie/releases/latest/download/pie.phar
+          curl -fsSL -o /usr/local/bin/pie https://github.com/php/pie/releases/download/1.5.5/pie.phar
           chmod +x /usr/local/bin/pie
           pie install mongodb/mongodb-extension:2.5.5
-          curl -fsSL https://getcomposer.org/installer | php -- --quiet --install-dir=/usr/local/bin --filename=composer
+          curl -fsSL -o /usr/local/bin/composer https://github.com/composer/composer/releases/download/2.11.1/composer.phar
+          chmod +x /usr/local/bin/composer
 
       # The Ubuntu image has no build tools, CMake, or vcpkg. vcpkg builds
       # the driver from source on first run, using the version pinned in
@@ -89,7 +90,8 @@ jobs:
         if: matrix.language == 'c' || matrix.language == 'cpp'
         run: |
           apt-get install -y --no-install-recommends ca-certificates build-essential cmake git curl zip unzip tar pkg-config ninja-build
-          git clone -q https://github.com/microsoft/vcpkg "$RUNNER_TEMP/vcpkg"
+          git clone https://github.com/microsoft/vcpkg "$RUNNER_TEMP/vcpkg"
+          git -C "$RUNNER_TEMP/vcpkg" checkout 2231e28f2aa5d0e2236cfd18fbfe7913fdef14ed
           "$RUNNER_TEMP/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
           echo "VCPKG_ROOT=$RUNNER_TEMP/vcpkg" >> "$GITHUB_ENV"
 

@@ -140,7 +140,8 @@ record pass "install dependencies"
 
 # The expected document is the "Wireless Mouse" line inside a fenced code
 # block in the README, so the README stays the single source of truth.
-expected=$(awk '/^```/{inblock=!inblock; next} inblock && /"Wireless Mouse"/' README.md)
+# Match fences with optional leading whitespace to handle indented code blocks.
+expected=$(awk '/^[[:space:]]*```/{inblock=!inblock; next} inblock && /"Wireless Mouse"/' README.md)
 if [ -z "$expected" ]; then
   record fail "read expected output from README" "No \"Wireless Mouse\" line found in a code block in README.md"
   finish
