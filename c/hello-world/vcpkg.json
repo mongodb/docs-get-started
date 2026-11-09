@@ -1,6 +1,8 @@
 {
   "name": "hello-world",
   "version-string": "1.0.0",
-  "builtin-baseline": "65a2c2391af39b773f83f91e0ab6c8ced8f9c727",
-  "dependencies": ["mongo-c-driver"]
+  "builtin-baseline": "9eec002df1cd109f8f104cd966a763daf9751489",
+  "dependencies": [
+    "mongo-c-driver"
+  ]
 }
