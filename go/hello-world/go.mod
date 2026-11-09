@@ -2,7 +2,7 @@ module github.com/mongodb/docs-get-started/go/hello-world
 
 go 1.25.1
 
-require go.mongodb.org/mongo-driver/v2 v2.9.2
+require go.mongodb.org/mongo-driver/v2 v2.9.3
 
 require (
 	github.com/klauspost/compress v1.19.2 // indirect
