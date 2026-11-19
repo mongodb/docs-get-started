@@ -35,14 +35,18 @@ jobs:
             image: golang:1.25.1
           - language: ruby
             image: ruby:3.3
+          # The Maven images use Corretto rather than Temurin: Temurin 21.0.13
+          # is below the 21.0.13.1 fix for CVE-2026-114938 (Java4Shell), and
+          # this Corretto build ships the fix. It is Amazon Linux based, so the
+          # jq install step below falls back to dnf. See INFOSEC-127760.
           - language: java
-            image: maven:3-eclipse-temurin-21
+            image: maven:3-amazoncorretto-21
           - language: java-rs
-            image: maven:3-eclipse-temurin-21
+            image: maven:3-amazoncorretto-21
           - language: kotlin-sync
-            image: maven:3-eclipse-temurin-21
+            image: maven:3-amazoncorretto-21
           - language: kotlin-coroutine
-            image: maven:3-eclipse-temurin-21
+            image: maven:3-amazoncorretto-21
           - language: scala
             image: sbtscala/scala-sbt:eclipse-temurin-21.0.12.1_1_1.13.1_3.3.9
           - language: dotnet
@@ -68,8 +72,15 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
 
+      # Most images are Debian/Ubuntu based, but the Corretto Maven images are
+      # Amazon Linux, which uses dnf instead of apt-get.
       - name: Install jq
-        run: apt-get update && apt-get install -y --no-install-recommends jq
+        run: |
+          if command -v apt-get >/dev/null 2>&1; then
+            apt-get update && apt-get install -y --no-install-recommends jq
+          else
+            dnf install -y jq
+          fi
 
       # The PHP image has no Composer or PIE. Install both, then install the
       # mongodb extension with the same pinned PIE command as the README.
@@ -98,4 +109,9 @@ jobs:
       - name: Run app test
         env:
           MONGODB_URI: mongodb://mongodb:27017
+          # The sbtscala Scala image still ships Temurin 21.0.13, which is
+          # below the 21.0.13.1 fix for CVE-2026-114938, and no tag with the
+          # fix exists yet. Disable the affected intrinsic for that run only.
+          # See INFOSEC-127760.
+          JAVA_TOOL_OPTIONS: ${{ matrix.language == 'scala' && '-XX:-UseBASE64Intrinsics' || '' }}
         run: bash tests/test-app.sh ${{ matrix.language }}
