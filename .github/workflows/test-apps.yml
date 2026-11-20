@@ -35,10 +35,11 @@ jobs:
             image: golang:1.25.1
           - language: ruby
             image: ruby:3.3
-          # The Maven images use Corretto rather than Temurin: Temurin 21.0.13
-          # is below the 21.0.13.1 fix for CVE-2026-114938 (Java4Shell), and
-          # this Corretto build ships the fix. It is Amazon Linux based, so the
-          # jq install step below falls back to dnf. See INFOSEC-127760.
+          # The Java-family images use Corretto rather than Temurin: their
+          # Temurin builds (21.0.12.1 and 21.0.13) are below the 21.0.13.1 fix
+          # for CVE-2026-114938 (Java4Shell), and these Corretto images ship
+          # Corretto 21.0.13.1. They are Amazon Linux based, so the jq install
+          # step below falls back to dnf. See INFOSEC-127760.
           - language: java
             image: maven:3-amazoncorretto-21
           - language: java-rs
@@ -48,7 +49,9 @@ jobs:
           - language: kotlin-coroutine
             image: maven:3-amazoncorretto-21
           - language: scala
-            image: sbtscala/scala-sbt:eclipse-temurin-21.0.12.1_1_1.13.1_3.3.9
+            # The tag's 21.0.13 is the Corretto feature version; the JDK
+            # inside is 21.0.13.1 (build 21.0.13.1+2), which has the fix.
+            image: sbtscala/scala-sbt:amazoncorretto-al2023-21.0.13_1.13.1_3.3.9
           - language: dotnet
             image: mcr.microsoft.com/dotnet/sdk:10.0
           - language: rust
@@ -72,7 +75,7 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
 
-      # Most images are Debian/Ubuntu based, but the Corretto Maven images are
+      # Most images are Debian/Ubuntu based, but the Corretto Java images are
       # Amazon Linux, which uses dnf instead of apt-get.
       - name: Install jq
         run: |
@@ -109,9 +112,4 @@ jobs:
       - name: Run app test
         env:
           MONGODB_URI: mongodb://mongodb:27017
-          # The sbtscala Scala image still ships Temurin 21.0.13, which is
-          # below the 21.0.13.1 fix for CVE-2026-114938, and no tag with the
-          # fix exists yet. Disable the affected intrinsic for that run only.
-          # See INFOSEC-127760.
-          JAVA_TOOL_OPTIONS: ${{ matrix.language == 'scala' && '-XX:-UseBASE64Intrinsics' || '' }}
         run: bash tests/test-app.sh ${{ matrix.language }}
