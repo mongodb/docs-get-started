@@ -1,3 +1,3 @@
-ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / scalaVersion := "3.10.0"
 
-libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.13.0"
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "5.14.0"
